@@ -1673,7 +1673,10 @@ void InventoryState::onGenerateBackstory(Action *)
 {
 	YAML::Node payloadNode = _battleGame->getSelectedUnit()->getGeoscapeSoldier()->asYaml();
 	std::string command = "generateCharacterBackstory";
-	std::string payloadPath = Options::getMasterUserFolder() + "payload.yaml";
+	std::string modPath = Options::getUserFolder() + "mods/TheCrew";
+	std::string payloadPath = modPath+ "/GameData/payload.yaml";
+	//std::string scriptPath = modPath+ "/Scripts/main.py";
+	std::string executablePath = modPath+ "/Bin/main";
 
 	// Payload
 	std::ofstream outFile(payloadPath);
@@ -1681,8 +1684,11 @@ void InventoryState::onGenerateBackstory(Action *)
 	outFile.close();
 
 	// Command
-	std::string pythonCommand = "python3 " + Options::getMasterUserFolder() + "main.py \"" + command + "\" \"" + payloadPath + "\"";
-	system(pythonCommand.c_str());
+	//std::string pythonCommand = "python3 " + scriptPath + " \"" + command + "\" \"" + payloadPath + "\"";
+	//system(pythonCommand.c_str());
+
+	std::string executableCommand = executablePath + " \"" + command + "\" \"" + payloadPath + "\"";
+	system(executableCommand.c_str());
 
 	// refresh ui
 	_inv->arrangeGround();
