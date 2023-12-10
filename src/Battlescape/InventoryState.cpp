@@ -1675,28 +1675,37 @@ void InventoryState::onGenerateBackstory(Action *)
 	std::string command = "generateCharacterBackstory";
 	std::string modPath = Options::getUserFolder() + "mods/TheCrew";
 	std::string payloadPath = modPath+ "/GameData/payload.yaml";
-	//std::string scriptPath = modPath+ "/Scripts/main.py";
+	//std::string screenshotPath = modPath+ "/GameData/screenshot.png";
+	std::string screenshotPath = Options::getMasterUserFolder() + "/screen000.png";
 	std::string executablePath = modPath+ "/Bin/main";
+
+	//Put all argument as a json payload
+	std::stringstream jsonStream;
+	jsonStream << "{\"command\": \"" << command
+			   << "\", \"payload\": \"" << payloadPath
+			   << "\", \"screenshot\": \"" << screenshotPath << "\"}";
+
+	std::string jsonString = jsonStream.str();
+	std::string executableCommand = executablePath + " '" + jsonString + "'";
 
 	// Payload
 	std::ofstream outFile(payloadPath);
 	outFile << payloadNode;
 	outFile.close();
 
-	// Command
-	//std::string pythonCommand = "python3 " + scriptPath + " \"" + command + "\" \"" + payloadPath + "\"";
-	//system(pythonCommand.c_str());
-
-	std::string executableCommand = executablePath + " \"" + command + "\" \"" + payloadPath + "\"";
-	system(executableCommand.c_str());
-
 	// refresh ui
 	_inv->arrangeGround();
 	updateStats();
 	refreshMouse();
 
+	// Execute Command
+	//system(executableCommand.c_str());
+
 	// give audio feedback
 	_game->getMod()->getSoundByDepth(_battleGame->getDepth(), Mod::ITEM_DROP)->play();
+
+	// Screenshot
+	_game->getScreen()->screenshot(screenshotPath);
 }
 
 /**
